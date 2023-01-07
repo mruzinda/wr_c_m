@@ -1,0 +1,10 @@
+Metadata-Version: 1.2
+Name: wr-c-m
+Version: 0.0.1
+Summary: Library for interfacing with the NRDZ White Rabbit nodes
+Home-page: https://github.com/mruzinda/wr_c_m
+Maintainer: NRDZ Team
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires: redis

@@ -1,6 +1,6 @@
 This code should help control and monitor the White Rabbit Lite Embedded Nodes (WR-LENs).
 
-Download the SevenSolutions WR-LEN library, and run the install script:
+Download/clone the SevenSolutions WR-LEN library (py7slib), and run the install script:
 ```
 cd py7slib
 bash ./Install.sh

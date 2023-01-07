@@ -21,10 +21,10 @@ PACKAGES = find_packages()
 print PACKAGES
 REQUIRES = ["redis"]
 
-setup_args = dict(name="wr_cm",
+setup_args = dict(name="wr_c_m",
                   maintainer="NRDZ Team",
                   description="Library for interfacing with the NRDZ White Rabbit nodes",
-                  url="https://github.com/HERA-Team/hera_wr_cm",
+                  url="https://github.com/mruzinda/wr_c_m",
                   version=VERSION,
                   packages=PACKAGES,
                   package_data={'py7slib': [so.lstrip('py7slib') for so in glob.glob('py7slib/lib/*')]},
