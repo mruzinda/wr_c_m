@@ -1,6 +1,6 @@
 '''
 Simple script to poll WR-LEN endpoints by hostname and
-write stats to redis
+write stats to redis and also dynamic stats to JSON file
 '''
 
 def main():
@@ -10,8 +10,12 @@ def main():
     import time
     import datetime
     import os
+    import json
     from wr_cm.wr_len import WrLen
     from wr_cm import __version__
+
+    # JSON filename - WR-LEN dynamic stats are written to this file
+    json_filename = "dynamic_wrlen_stats.json"
 
     hostname = socket.gethostname()
 
@@ -31,7 +35,6 @@ def main():
         hosts = args.hosts
 
     print('Begging WR-LEN status polling. Hosts are:')
-    print(hosts)
     script_redis_key = "status:script:%s:%s" % (hostname, __file__)
     wr_devices = {}
     count = 0
@@ -48,7 +51,6 @@ def main():
                 except socket.gaierror:
                     continue
                 try:
-                    print(host)
                     wr_devices[host] = WrLen(host)
                 except:
                     print("Error while connecting to %s" % host)
@@ -56,6 +58,43 @@ def main():
             print("%d: polling %s" % (count, host))
             try:
                 stats = wr_devices[host].gather_keys(include_ver=False)
+                
+                #print("wr0_rx = ", stats['wr0_rx'])
+                #print(json.dumps(stats['temp']))
+                
+                # Create dictionary of dynamic stats from WR-LENs and convert to JSON
+                dynamic_stats = {"temp":stats['temp'].encode('ascii'),
+                "timestamp":stats['timestamp'].encode('ascii'),
+                "wr0_rx":stats['wr0_rx'],
+                "wr0_tx":stats['wr0_tx'],
+                "wr1_rx":stats['wr1_rx'],
+                "wr1_tx":stats['wr1_tx'],
+                "wr0_lnk":stats['wr0_lnk'],
+                "wr1_lnk":stats['wr1_lnk'],
+                "wr0_setp":stats['wr0_setp'],
+                "wr0_cko":stats['wr0_cko'],
+                "wr0_mu":stats['wr0_mu'],
+                "wr0_crtt":stats['wr0_crtt'],
+                "wr0_ucnt":stats['wr0_ucnt'],
+                "mode":stats['mode'].encode('ascii'),
+                "wr0_ss":stats['wr0_ss'].encode('ascii')}
+                
+                # Convert to JSON
+                dynamic_stats_json = json.dumps(dynamic_stats)
+                print(dynamic_stats_json)
+                
+                # Write dictionary to JSON file
+                with open(json_filename, "w") as outfile:
+                    #outfile.write(dynamic_stats_json) # The strings in the dictionary are written as unicode strings
+                    json.dump(dynamic_stats_json, outfile)
+                    
+                # Read JSON file. 
+                with open(json_filename, "r") as outfile:
+                    read_json_file = json.load(outfile)
+                    
+                print("JSON file output")
+                print(read_json_file)
+                
                 r.hmset(hash_key, stats)
                 # Delete old keys in case there is some weird stale stuff
                 old_keys = [k for k in r.hkeys(hash_key) if k not in stats.keys()]
