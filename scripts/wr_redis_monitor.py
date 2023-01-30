@@ -14,7 +14,7 @@ def main():
     from wr_cm.wr_len import WrLen
     from wr_cm import __version__
 
-    verbose_flag = 1 # If set to 1, stats before writing and after will be printed to the screen.
+    verbose_flag = 0 # If set to 1, stats before writing and after will be printed to the screen.
 
     hostname = socket.gethostname()
 
